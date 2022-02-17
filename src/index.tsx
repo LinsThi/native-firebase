@@ -1,3 +1,4 @@
+import { TEST } from '@env';
 import React from 'react';
 import { Text, View } from 'react-native';
 
@@ -10,7 +11,7 @@ export default function App() {
         alignItems: 'center',
       }}
     >
-      <Text>Ola</Text>
+      <Text>{TEST}</Text>
     </View>
   );
 }

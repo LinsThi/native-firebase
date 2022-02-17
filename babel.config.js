@@ -1,13 +1,20 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["module:metro-react-native-babel-preset"],
+    presets: ['module:metro-react-native-babel-preset'],
     plugins: [
       [
-        "babel-plugin-root-import",
+        'module:react-native-dotenv',
         {
-          rootPathPrefix: "~",
-          rootPathSuffix: "src",
+          moduleName: '@env',
+          path: '.env',
+        },
+      ],
+      [
+        'babel-plugin-root-import',
+        {
+          rootPathPrefix: '~',
+          rootPathSuffix: 'src',
         },
       ],
     ],
