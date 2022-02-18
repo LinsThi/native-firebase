@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "814539817373",
+    "project_id": "nativefire-ba372",
+    "storage_bucket": "nativefire-ba372.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814539817373:android:b5cc7721adc0867e7caf74",
+        "android_client_info": {
+          "package_name": "com.nativefirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "814539817373-1nl73gh1m7ooovoerleqgqcac5ucbq1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANrDFbwePSBR1MPly1pYfc1QsSkdFwi9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "814539817373-1nl73gh1m7ooovoerleqgqcac5ucbq1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
