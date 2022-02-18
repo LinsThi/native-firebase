@@ -1,73 +1,122 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, Fontisto } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
-import React, { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Text } from 'react-native';
 
-import { Button } from '~/components/Button';
 import { Input } from '~/components/Input';
-
-import home from '~/assets/home.json';
 
 import * as Sty from './styles';
 
+type ProductProps = {
+  id: string;
+  name: string;
+  value: string;
+  created_at?: any;
+};
+
+type RenderProductProps = {
+  item: ProductProps;
+};
+
 export function Home() {
-  const navigation = useNavigation();
+  const [name, setName] = useState('');
+  const [value, setValue] = useState('');
+  const [products, setProducts] = useState<ProductProps[]>([]);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  function handleSignOut() {
+    auth().signOut();
+  }
 
-  const handleForgotPassword = useCallback(() => {
-    auth()
-      .sendPasswordResetEmail('e-mail')
-      .then(() =>
-        Alert.alert(
-          'Recuperação',
-          'Enviamos um e-mail para recuperar sua senha.',
-        ),
-      )
-      .catch(error => console.log(error));
+  const handleNewProduct = useCallback(() => {
+    firestore()
+      .collection('products')
+      .add({
+        name,
+        value,
+        created_at: firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => Alert.alert('Produto', 'Cadastrado com sucesso'))
+      .catch(error => console.log(error))
+      .finally(() => {
+        setName('');
+        setValue('');
+      });
+  }, [name, value]);
+
+  const renderProduct = useCallback(({ item }: RenderProductProps) => {
+    const seconds = item.created_at.seconds * 1000;
+    const dateAdded = `${new Date(seconds).getDate()}/${new Date(
+      seconds,
+    ).getMonth()}`;
+    return (
+      <Sty.ContainerItem>
+        <Sty.ContainerInfo>
+          <Sty.TextProduct>{item.name}</Sty.TextProduct>
+          <Sty.TextValue>{item.value}</Sty.TextValue>
+        </Sty.ContainerInfo>
+
+        <Sty.ContainerItemDate>
+          <Fontisto name="date" size={20} />
+          <Sty.TextDateAdded>{dateAdded}</Sty.TextDateAdded>
+        </Sty.ContainerItemDate>
+      </Sty.ContainerItem>
+    );
+  }, []);
+
+  useEffect(() => {
+    const results = firestore()
+      .collection('products')
+      // .where('value', '>', '15')
+      .onSnapshot(querySnapshot => {
+        const data = querySnapshot.docs.map(doc => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        }) as ProductProps[];
+
+        setProducts(data);
+      });
+
+    return () => results();
   }, []);
 
   return (
     <Sty.Container>
+      <Sty.ContainerHeader>
+        <Sty.Button onPress={() => handleSignOut()}>
+          <Ionicons name="ios-exit-outline" size={40} color="#9370db" />
+        </Sty.Button>
+      </Sty.ContainerHeader>
+
+      <Sty.ContainerInputs>
+        <Sty.TextSession>Adicionar produtos</Sty.TextSession>
+        <Input
+          placeholder="Nome do produto"
+          value={name}
+          onChangeText={setName}
+        />
+        <Input
+          placeholder="Valor do produto"
+          value={value}
+          onChangeText={setValue}
+        />
+
+        <Sty.ButtonInput onPress={() => handleNewProduct()}>
+          <Text>Adicionar produto</Text>
+        </Sty.ButtonInput>
+      </Sty.ContainerInputs>
+
       <Sty.ContainerInfo>
-        <Sty.ContainerHeader>
-          <LottieView
-            source={home}
-            autoPlay
-            loop
-            style={{ width: 230, height: 230 }}
-          />
-        </Sty.ContainerHeader>
+        <Sty.TextSession>Produtos adicionados</Sty.TextSession>
 
-        <Sty.ContainerForm>
-          <Sty.TextSession>Entrar</Sty.TextSession>
-
-          <Input placeholder="E-mail" value={email} onChangeText={setEmail} />
-          <Input
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-          />
-        </Sty.ContainerForm>
-
-        <Sty.ContainerButton>
-          <Button name="Entrar" />
-
-          <Sty.ContainerHelpButtons>
-            <Sty.HelpButton onPress={() => navigation.navigate('Register')}>
-              <Feather name="user-plus" size={20} />
-              <Sty.TextButton>Criar conta</Sty.TextButton>
-            </Sty.HelpButton>
-
-            <Sty.HelpButton onPress={() => handleForgotPassword()}>
-              <MaterialCommunityIcons name="email-outline" size={20} />
-              <Sty.TextButton>Recuperar senha</Sty.TextButton>
-            </Sty.HelpButton>
-          </Sty.ContainerHelpButtons>
-        </Sty.ContainerButton>
+        <Sty.FlatlistProducts
+          data={products}
+          extraData={products}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={renderProduct}
+        />
       </Sty.ContainerInfo>
     </Sty.Container>
   );

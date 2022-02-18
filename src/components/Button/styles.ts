@@ -14,3 +14,5 @@ export const Button = styled.TouchableOpacity`
 export const Name = styled.Text`
   color: #fff;
 `;
+
+export const Loading = styled.ActivityIndicator``;

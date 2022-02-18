@@ -1,15 +1,27 @@
+import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Home } from '~/screens/Home';
+import { Login } from '~/screens/Login';
 import { Register } from '~/screens/Register';
 
 const Stack = createNativeStackNavigator();
+const StackLogin = createNativeStackNavigator();
 
 export function RootStack() {
+  const [isLogged, setIsLogged] = useState<FirebaseAuthTypes.User | null>(null);
+
+  useEffect(() => {
+    const user = auth().onAuthStateChanged(setIsLogged);
+
+    return user;
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8ff' }}>
       <KeyboardAvoidingView
@@ -18,15 +30,26 @@ export function RootStack() {
         enabled={false}
       >
         <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Register" component={Register} />
-          </Stack.Navigator>
+          {isLogged ? (
+            <Stack.Navigator
+              initialRouteName="Home"
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Register" component={Register} />
+            </Stack.Navigator>
+          ) : (
+            <StackLogin.Navigator
+              initialRouteName="Login"
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <StackLogin.Screen name="Login" component={Login} />
+            </StackLogin.Navigator>
+          )}
         </NavigationContainer>
       </KeyboardAvoidingView>
     </SafeAreaView>
