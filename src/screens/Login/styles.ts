@@ -57,3 +57,17 @@ export const TextButton = styled.Text`
   font-size: 17px;
   padding-left: 5px;
 `;
+
+export const ButtonGoogle = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  background: #4285f4;
+  padding: 5px 5px;
+  border-radius: 10px;
+`;
+
+export const TextButtonGoogle = styled.Text`
+  font-size: 20px;
+  padding-left: 10px;
+  color: #fff;
+`;

@@ -1,5 +1,7 @@
+import { CLIENT_ID } from '@env';
 import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +20,10 @@ export function RootStack() {
 
   useEffect(() => {
     const user = auth().onAuthStateChanged(setIsLogged);
+
+    GoogleSignin.configure({
+      webClientId: CLIENT_ID,
+    });
 
     return user;
   }, []);
