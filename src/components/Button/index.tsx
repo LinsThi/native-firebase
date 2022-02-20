@@ -5,12 +5,17 @@ import * as Sty from './styles';
 
 interface ButtonProps extends TouchableOpacityProps {
   name: string;
+  loading: boolean;
 }
 
-export function Button({ name, ...rest }: ButtonProps) {
+export function Button({ name, loading, ...rest }: ButtonProps) {
   return (
     <Sty.Button {...rest}>
-      <Sty.Name>{name}</Sty.Name>
+      {loading ? (
+        <Sty.Loading size="large" color="#fff" />
+      ) : (
+        <Sty.Name>{name}</Sty.Name>
+      )}
     </Sty.Button>
   );
 }
